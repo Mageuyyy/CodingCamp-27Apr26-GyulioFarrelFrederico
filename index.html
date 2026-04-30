@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget & Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Balance Display ─────────────────────────────────────── -->
+  <header id="balance-section">
+    <h1>Budget & Expense Tracker</h1>
+    <div id="theme-toggle-wrapper">
+      <button id="theme-toggle" type="button" aria-label="Toggle theme">Light Mode</button>
+    </div>
+    <div id="balance-display">
+      <span>Total Expenses:</span>
+      <span id="balance-amount">Rp 0</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Add Transaction Form ────────────────────────────────── -->
+    <section id="form-section">
+      <h2>Add Transaction</h2>
+      <form id="transaction-form" novalidate>
+        <div class="form-group">
+          <label for="item-name">Item Name</label>
+          <input type="text" id="item-name" name="name" placeholder="cth. Kopi" autocomplete="off" />
+          <span class="error-message" id="name-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="item-amount">Price (Rp)</label>
+          <input type="number" id="item-amount" name="amount" placeholder="0" min="1" step="1" />
+          <span class="error-message" id="amount-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="item-category">Category</label>
+          <select id="item-category" name="category">
+            <option value="">-- Pilih kategori --</option>
+          </select>
+          <span class="error-message" id="category-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="limit-amount">Spending Limit</label>
+          <input type="number" id="limit-amount" name="limit" placeholder="Masukkan batas Rp" min="0" step="1000" />
+          <span class="limit-status" id="limit-status">Atur batas untuk menyoroti transaksi besar.</span>
+        </div>
+        <button type="submit" id="add-btn">Add Transaction</button>
+      </form>
+    </section>
+
+    <!-- ── Transaction List ────────────────────────────────────── -->
+    <section id="list-section">
+      <div class="section-header">
+        <h2>Transactions</h2>
+        <div class="sort-controls" role="group" aria-label="Sort transactions">
+          <span class="sort-label">Sort by:</span>
+          <button class="sort-btn" data-sort="date"        type="button">Newest</button>
+          <button class="sort-btn" data-sort="amount-desc" type="button">Largest</button>
+          <button class="sort-btn" data-sort="amount-asc"  type="button">Smallest</button>
+          <button class="sort-btn" data-sort="category"    type="button">Category</button>
+        </div>
+      </div>
+      <ul id="transaction-list"></ul>
+    </section>
+
+    <!-- ── Monthly Summary ─────────────────────────────────────── -->
+    <section id="summary-section">
+      <h2>Monthly Summary</h2>
+      <div class="table-wrapper">
+        <table id="monthly-summary">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Total</th>
+              <th>Per Category</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-summary-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Spending Chart ──────────────────────────────────────── -->
+    <section id="chart-section">
+      <h2>Spending per Category</h2>
+      <div id="chart-container">
+        <canvas id="spending-chart"></canvas>
+        <p id="chart-placeholder" class="placeholder-message">Belum ada data</p>
+      </div>
+    </section>
+
+    <!-- ── Category Manager ────────────────────────────────────── -->
+    <section id="category-section">
+      <h2>Manage Categories</h2>
+      <ul id="category-list"></ul>
+      <form id="add-category-form" novalidate>
+        <div class="form-group form-group--inline">
+          <input type="text" id="new-category-input" placeholder="Nama kategori baru" autocomplete="off" />
+          <button type="submit" class="btn-secondary">Tambah</button>
+        </div>
+        <span class="error-message" id="new-category-error"></span>
+      </form>
+    </section>
+
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
