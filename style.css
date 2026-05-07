@@ -587,27 +587,178 @@ main section h2::before {
   white-space: nowrap;
 }
 
-#month-picker {
-  padding: 0.45rem 0.75rem;
+/* Custom month picker */
+.mp-wrap {
+  position: relative;
+}
+
+.mp-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
   font-size: 0.82rem;
   font-family: inherit;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: var(--text-secondary);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-  appearance: none;
-  -webkit-appearance: none;
-  color-scheme: dark;
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
-#month-picker:focus {
+.mp-trigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+}
+
+.mp-trigger:focus-visible {
   outline: none;
   border-color: var(--teal-border);
-  background: rgba(14, 184, 160, 0.06);
   box-shadow: 0 0 0 3px var(--teal-dim);
+}
+
+.mp-trigger.mp-trigger--active {
+  background: var(--teal-dim);
+  border-color: var(--teal-border);
+  color: var(--teal);
+}
+
+.mp-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.mp-chevron {
+  width: 10px;
+  height: 6px;
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: transform 0.18s;
+}
+
+.mp-trigger[aria-expanded="true"] .mp-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.mp-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  width: 240px;
+  background: var(--bg-mid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  padding: 0.85rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: mp-open 0.15s ease-out;
+}
+
+@keyframes mp-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Year navigation row */
+.mp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.mp-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.mp-nav:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.mp-nav:focus-visible {
+  outline: none;
+  border-color: var(--teal-border);
+  box-shadow: 0 0 0 2px var(--teal-dim);
+}
+
+.mp-year {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+/* Month grid */
+.mp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.mp-month-btn {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.72rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.mp-month-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.mp-month-btn:focus-visible {
+  outline: none;
+  border-color: var(--teal-border);
+  box-shadow: 0 0 0 2px var(--teal-dim);
+}
+
+.mp-month-btn--selected {
+  background: var(--teal-dim);
+  color: var(--teal);
+  border-color: var(--teal-border);
+}
+
+.mp-month-btn--selected:hover {
+  background: rgba(14, 184, 160, 0.28);
 }
 
 .btn-ghost {
@@ -642,10 +793,6 @@ main section h2::before {
 }
 
 .table-wrapper { overflow-x: auto; }
-
-body.light-mode #month-picker {
-  color-scheme: light;
-}
 
 #monthly-summary {
   width: 100%;

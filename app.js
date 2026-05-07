@@ -237,11 +237,24 @@ function getFilteredTransactions() {
  * Syncs the month picker UI to the current activeMonthFilter state.
  */
 function renderMonthFilter() {
-  const picker = document.getElementById("month-picker");
+  const trigger = document.getElementById("mp-trigger");
+  const triggerLabel = document.getElementById("mp-trigger-label");
   const clearBtn = document.getElementById("month-filter-clear");
-  if (!picker || !clearBtn) return;
-  picker.value = activeMonthFilter;
+  if (!trigger || !triggerLabel || !clearBtn) return;
+
+  if (activeMonthFilter) {
+    triggerLabel.textContent = formatMonthLabel(activeMonthFilter);
+    trigger.classList.add("mp-trigger--active");
+  } else {
+    triggerLabel.textContent = "All months";
+    trigger.classList.remove("mp-trigger--active");
+  }
   clearBtn.classList.toggle("btn-ghost--active", !!activeMonthFilter);
+
+  // Highlight the selected month button in the grid
+  document.querySelectorAll(".mp-month-btn").forEach(btn => {
+    btn.classList.toggle("mp-month-btn--selected", btn.dataset.value === activeMonthFilter);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -721,6 +734,101 @@ function handleMonthFilterClear() {
 }
 
 // ---------------------------------------------------------------------------
+// Custom Month Picker Controller
+// ---------------------------------------------------------------------------
+
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let mpYear = new Date().getFullYear();
+let mpOpen = false;
+
+function buildMonthGrid() {
+  const grid = document.getElementById("mp-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  MONTH_ABBR.forEach((abbr, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "mp-month-btn";
+    btn.textContent = abbr;
+    const mm = String(i + 1).padStart(2, "0");
+    btn.dataset.value = `${mpYear}-${mm}`;
+    btn.setAttribute("aria-label", `${abbr} ${mpYear}`);
+    if (btn.dataset.value === activeMonthFilter) btn.classList.add("mp-month-btn--selected");
+    btn.addEventListener("click", () => {
+      activeMonthFilter = btn.dataset.value;
+      closePicker();
+      render();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function updatePickerYear() {
+  const yearEl = document.getElementById("mp-year");
+  if (yearEl) yearEl.textContent = mpYear;
+  buildMonthGrid();
+}
+
+function openPicker() {
+  const dropdown = document.getElementById("mp-dropdown");
+  const trigger  = document.getElementById("mp-trigger");
+  if (!dropdown || !trigger) return;
+  // Seed year from current filter or today
+  mpYear = activeMonthFilter
+    ? parseInt(activeMonthFilter.slice(0, 4), 10)
+    : new Date().getFullYear();
+  updatePickerYear();
+  dropdown.hidden = false;
+  trigger.setAttribute("aria-expanded", "true");
+  mpOpen = true;
+}
+
+function closePicker() {
+  const dropdown = document.getElementById("mp-dropdown");
+  const trigger  = document.getElementById("mp-trigger");
+  if (!dropdown || !trigger) return;
+  dropdown.hidden = true;
+  trigger.setAttribute("aria-expanded", "false");
+  mpOpen = false;
+}
+
+function togglePicker() {
+  mpOpen ? closePicker() : openPicker();
+}
+
+function setupMonthPicker() {
+  document.getElementById("mp-trigger")
+    ?.addEventListener("click", (e) => { e.stopPropagation(); togglePicker(); });
+
+  document.getElementById("mp-prev")
+    ?.addEventListener("click", (e) => { e.stopPropagation(); mpYear--; updatePickerYear(); });
+
+  document.getElementById("mp-next")
+    ?.addEventListener("click", (e) => { e.stopPropagation(); mpYear++; updatePickerYear(); });
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (mpOpen && !document.getElementById("month-picker-wrap")?.contains(e.target)) {
+      closePicker();
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mpOpen) {
+      closePicker();
+      document.getElementById("mp-trigger")?.focus();
+    }
+  });
+}
+
+function handleMonthFilterClear() {
+  activeMonthFilter = "";
+  render();
+}
+
+// ---------------------------------------------------------------------------
 // Input UX Enhancements
 // ---------------------------------------------------------------------------
 
@@ -835,9 +943,10 @@ function init() {
 
   // Month filter
   document.getElementById("month-picker")
-    .addEventListener("change", handleMonthFilterChange);
+    ?.addEventListener("change", handleMonthFilterChange);
   document.getElementById("month-filter-clear")
     .addEventListener("click", handleMonthFilterClear);
+  setupMonthPicker();
 
   applyTheme();
 
