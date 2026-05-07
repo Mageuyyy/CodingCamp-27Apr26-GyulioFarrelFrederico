@@ -71,6 +71,11 @@
     <!-- ── Monthly Summary ─────────────────────────────────────── -->
     <section id="summary-section">
       <h2>Monthly Summary</h2>
+      <div class="month-filter-bar">
+        <label for="month-picker" class="month-filter-label">View month:</label>
+        <input type="month" id="month-picker" aria-label="Select month to view" />
+        <button type="button" id="month-filter-clear" class="btn-ghost" aria-label="Clear month filter">All</button>
+      </div>
       <div class="table-wrapper">
         <table id="monthly-summary">
           <thead>

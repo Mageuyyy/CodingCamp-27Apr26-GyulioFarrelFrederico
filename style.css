@@ -570,7 +570,82 @@ main section h2::before {
 /* ----------------------------------------------------------
    8. Monthly Summary table
    ---------------------------------------------------------- */
+.month-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.month-filter-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#month-picker {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+}
+
+#month-picker:focus {
+  outline: none;
+  border-color: var(--teal-border);
+  background: rgba(14, 184, 160, 0.06);
+  box-shadow: 0 0 0 3px var(--teal-dim);
+}
+
+.btn-ghost {
+  padding: 0.38rem 0.85rem;
+  font-size: 0.72rem;
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.12s;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.btn-ghost--active {
+  background: var(--teal-dim);
+  color: var(--teal);
+  border-color: var(--teal-border);
+}
+
+.btn-ghost--active:hover {
+  background: rgba(14, 184, 160, 0.25);
+}
+
 .table-wrapper { overflow-x: auto; }
+
+body.light-mode #month-picker {
+  color-scheme: light;
+}
 
 #monthly-summary {
   width: 100%;

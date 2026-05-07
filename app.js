@@ -87,6 +87,7 @@ let spendingLimit = 0;
 let theme = "dark";
 let chartInstance = null;
 let sortMode = "date";
+let activeMonthFilter = ""; // "YYYY-MM" or "" for all
 
 // ---------------------------------------------------------------------------
 // Animation Helpers
@@ -220,6 +221,30 @@ function validate({ name, amount, category }) {
 }
 
 // ---------------------------------------------------------------------------
+// Month Filter Helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns transactions filtered to the active month, or all if no filter set.
+ * @returns {Transaction[]}
+ */
+function getFilteredTransactions() {
+  if (!activeMonthFilter) return transactions;
+  return transactions.filter(t => (t.date || "").slice(0, 7) === activeMonthFilter);
+}
+
+/**
+ * Syncs the month picker UI to the current activeMonthFilter state.
+ */
+function renderMonthFilter() {
+  const picker = document.getElementById("month-picker");
+  const clearBtn = document.getElementById("month-filter-clear");
+  if (!picker || !clearBtn) return;
+  picker.value = activeMonthFilter;
+  clearBtn.classList.toggle("btn-ghost--active", !!activeMonthFilter);
+}
+
+// ---------------------------------------------------------------------------
 // Sorting Helper
 // ---------------------------------------------------------------------------
 
@@ -243,7 +268,13 @@ function getSorted(txns) {
  */
 function renderBalance(txns) {
   const el = document.getElementById("balance-amount");
+  const label = document.querySelector("#balance-display span:first-child");
   const sum = txns.reduce((acc, t) => acc + t.amount, 0);
+  if (label) {
+    label.textContent = activeMonthFilter
+      ? `Expenses — ${formatMonthLabel(activeMonthFilter)}:`
+      : "Total Expenses:";
+  }
   animateCounter(el, sum);
 }
 
@@ -524,13 +555,15 @@ function handleThemeToggle() {
  * Full UI refresh — call after any state mutation that affects everything.
  */
 function render() {
-  renderBalance(transactions);
-  renderList(transactions);
-  renderChart(transactions);
-  renderMonthlySummary(transactions);
+  const filtered = getFilteredTransactions();
+  renderBalance(filtered);
+  renderList(filtered);
+  renderChart(filtered);
+  renderMonthlySummary(filtered);
   renderCategorySelect();
   renderCategoryManager();
   renderLimitStatus();
+  renderMonthFilter();
 }
 
 /**
@@ -538,7 +571,7 @@ function render() {
  * Avoids destroying/recreating the chart or re-building the category UI.
  */
 function renderListOnly() {
-  renderList(transactions);
+  renderList(getFilteredTransactions());
 }
 
 // ---------------------------------------------------------------------------
@@ -677,6 +710,16 @@ function handleSort(mode) {
   renderListOnly();
 }
 
+function handleMonthFilterChange(event) {
+  activeMonthFilter = event.target.value; // "YYYY-MM" or ""
+  render();
+}
+
+function handleMonthFilterClear() {
+  activeMonthFilter = "";
+  render();
+}
+
 // ---------------------------------------------------------------------------
 // Input UX Enhancements
 // ---------------------------------------------------------------------------
@@ -789,6 +832,12 @@ function init() {
     .addEventListener("input", handleLimitInput);
   document.getElementById("theme-toggle")
     .addEventListener("click", handleThemeToggle);
+
+  // Month filter
+  document.getElementById("month-picker")
+    .addEventListener("change", handleMonthFilterChange);
+  document.getElementById("month-filter-clear")
+    .addEventListener("click", handleMonthFilterClear);
 
   applyTheme();
 
