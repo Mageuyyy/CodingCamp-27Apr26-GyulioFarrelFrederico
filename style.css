@@ -649,10 +649,8 @@ main section h2::before {
 
 /* Dropdown panel */
 .mp-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 100;
+  position: fixed;
+  z-index: 200;
   width: 240px;
   background: var(--bg-mid);
   border: 1px solid var(--border);

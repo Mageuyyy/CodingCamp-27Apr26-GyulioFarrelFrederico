@@ -779,6 +779,12 @@ function openPicker() {
     ? parseInt(activeMonthFilter.slice(0, 4), 10)
     : new Date().getFullYear();
   updatePickerYear();
+
+  // Position below the trigger using fixed coords so no parent clips it
+  const rect = trigger.getBoundingClientRect();
+  dropdown.style.top  = `${rect.bottom + 6}px`;
+  dropdown.style.left = `${rect.left}px`;
+
   dropdown.hidden = false;
   trigger.setAttribute("aria-expanded", "true");
   mpOpen = true;
